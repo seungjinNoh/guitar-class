@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: guitar-class
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/guitarclass
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+# JWT Configuration
+jwt:
+  secret: your-secret-key-change-this-in-production-min-256-bits
+  expiration: 86400000 # 24 hours in milliseconds
+
+# AWS S3 Configuration
+aws:
+  s3:
+    bucket: guitar-class-bucket
+    region: ap-northeast-2
+    access-key: ${AWS_ACCESS_KEY:}
+    secret-key: ${AWS_SECRET_KEY:}
+
+# Server Configuration
+server:
+  port: 8080
+
+# Logging
+logging:
+  level:
+    com.guitarclass: DEBUG
+    org.springframework.security: DEBUG
