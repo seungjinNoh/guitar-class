@@ -24,8 +24,10 @@ spring:
 
 # JWT Configuration
 jwt:
-  secret: your-secret-key-change-this-in-production-min-256-bits
-  expiration: 86400000 # 24 hours in milliseconds
+  secret: ${JWT_SECRET:your-secret-key-change-this-in-production-min-256-bits-long-enough-for-hs512}
+  access-token-expiration: 3600000 # 1 hour in milliseconds
+  refresh-token-expiration: 2592000000 # 30 days in milliseconds
+  refresh-token-expiration-short: 86400000 # 1 day in milliseconds (when auto-login is disabled)
 
 # AWS S3 Configuration
 aws:
