@@ -36,13 +36,13 @@ class AuthService(
             email = request.email,
             password = passwordEncoder.encode(request.password),
             nickname = request.nickname,
-            role = "USER"
+            role = com.guitarclass.domain.UserRole.USER
         )
 
         val savedUser = userRepository.save(user)
 
         // 토큰 생성 (회원가입 시 자동 로그인 없음)
-        val accessToken = jwtTokenProvider.generateAccessToken(savedUser.email, savedUser.role)
+        val accessToken = jwtTokenProvider.generateAccessToken(savedUser.email, savedUser.role.name)
         val refreshToken = jwtTokenProvider.generateRefreshToken(savedUser.email, false)
 
         // Refresh Token 저장
@@ -69,7 +69,7 @@ class AuthService(
         }
 
         // 토큰 생성
-        val accessToken = jwtTokenProvider.generateAccessToken(user.email, user.role)
+        val accessToken = jwtTokenProvider.generateAccessToken(user.email, user.role.name)
         val refreshToken = jwtTokenProvider.generateRefreshToken(user.email, request.autoLogin)
 
         // 기존 Refresh Token 삭제 후 새로 저장
@@ -105,7 +105,7 @@ class AuthService(
         val user = storedToken.user
 
         // 새로운 Access Token 생성
-        val newAccessToken = jwtTokenProvider.generateAccessToken(user.email, user.role)
+        val newAccessToken = jwtTokenProvider.generateAccessToken(user.email, user.role.name)
 
         return AuthResponse(
             accessToken = newAccessToken,
@@ -143,9 +143,9 @@ class AuthService(
      * User to UserDto
      */
     private fun User.toDto() = UserDto(
-        id = id,
+        id = id!!,
         email = email,
         nickname = nickname,
-        role = role
+        role = role.name
     )
 }
