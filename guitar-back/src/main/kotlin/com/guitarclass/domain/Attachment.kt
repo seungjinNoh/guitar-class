@@ -25,6 +25,6 @@ class Attachment(
     var contentType: String,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", nullable = false)
-    var post: Post
+    @JoinColumn(name = "post_id", nullable = true)
+    var post: Post? = null
 ) : BaseEntity()

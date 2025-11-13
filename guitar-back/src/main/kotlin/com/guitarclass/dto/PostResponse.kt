@@ -13,7 +13,8 @@ data class PostResponse(
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
     val commentCount: Int,
-    val attachmentCount: Int
+    val attachmentCount: Int,
+    val attachments: List<AttachmentResponse>
 ) {
     companion object {
         fun from(post: Post): PostResponse {
@@ -27,7 +28,8 @@ data class PostResponse(
                 createdAt = post.createdAt,
                 updatedAt = post.updatedAt,
                 commentCount = post.comments.size,
-                attachmentCount = post.attachments.size
+                attachmentCount = post.attachments.size,
+                attachments = post.attachments.map { AttachmentResponse.from(it) }
             )
         }
     }

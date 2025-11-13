@@ -15,7 +15,8 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional(readOnly = true)
 class PostService(
     private val postRepository: PostRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val attachmentRepository: com.guitarclass.repository.AttachmentRepository
 ) {
 
     fun getPosts(pageable: Pageable): Page<PostListResponse> {
@@ -42,6 +43,20 @@ class PostService(
         )
 
         val savedPost = postRepository.save(post)
+
+        // 첨부파일 연결
+        request.attachmentIds?.let { ids ->
+            if (ids.isNotEmpty()) {
+                val attachments = attachmentRepository.findByIdIn(ids)
+
+                // 첨부파일이 존재하고 아직 게시글에 연결되지 않은 경우만 연결
+                attachments.filter { it.post == null }.forEach { attachment ->
+                    attachment.post = savedPost
+                    savedPost.attachments.add(attachment)
+                }
+            }
+        }
+
         return PostResponse.from(savedPost)
     }
 
@@ -55,6 +70,30 @@ class PostService(
 
         post.title = request.title
         post.content = request.content
+
+        // 첨부파일 업데이트
+        request.attachmentIds?.let { newIds ->
+            // 기존 첨부파일 연결 해제 (새로운 ID 목록에 없는 것들)
+            val existingAttachments = post.attachments.toList()
+            existingAttachments.forEach { attachment ->
+                if (attachment.id !in newIds) {
+                    attachment.post = null
+                    post.attachments.remove(attachment)
+                }
+            }
+
+            // 새로운 첨부파일 연결
+            val currentAttachmentIds = post.attachments.mapNotNull { it.id }
+            val idsToAdd = newIds.filter { it !in currentAttachmentIds }
+
+            if (idsToAdd.isNotEmpty()) {
+                val attachmentsToAdd = attachmentRepository.findByIdIn(idsToAdd)
+                attachmentsToAdd.filter { it.post == null }.forEach { attachment ->
+                    attachment.post = post
+                    post.attachments.add(attachment)
+                }
+            }
+        }
 
         return PostResponse.from(post)
     }
