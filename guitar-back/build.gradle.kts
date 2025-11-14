@@ -41,6 +41,9 @@ dependencies {
     // AWS SDK for S3
     implementation("software.amazon.awssdk:s3:2.21.0")
 
+    // ZIP file processing
+    implementation("org.apache.commons:commons-compress:1.25.0")
+
     // PDF Generation (for markdown to PDF)
     implementation("com.openhtmltopdf:openhtmltopdf-pdfbox:1.0.10")
     implementation("com.openhtmltopdf:openhtmltopdf-slf4j:1.0.10")
